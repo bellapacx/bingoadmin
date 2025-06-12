@@ -91,90 +91,93 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div>
-      <Navbar onLogout={onLogout}/>
-      <div className="p-6">
-        <h1 className="text-3xl font-bold text-white mb-4">Shops</h1>
+  <Navbar onLogout={onLogout} />
+  <div className="p-4 sm:p-6">
+    <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">Shops</h1>
 
-        {/* Create Shop Form */}
-        <form onSubmit={handleCreate} className="bg-white/10 p-6 rounded-lg mb-8 max-w-xl">
-          <h2 className="text-xl font-semibold text-white mb-4">Create Shop</h2>
-          {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
-          {success && <p className="text-green-400 text-sm mb-2">{success}</p>}
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              name="shop_id"
-              value={form.shop_id}
-              onChange={handleChange}
-              placeholder="Shop ID"
-              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-              required
-            />
-            <input
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              placeholder="Username"
-              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-              required
-            />
-            <input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-              required
-            />
-            <input
-              name="balance"
-              type="number"
-              step="0.01"
-              value={form.balance}
-              onChange={handleChange}
-              placeholder="Balance"
-              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 transition-colors py-2 rounded font-semibold"
-          >
-            Create Shop
-          </button>
-        </form>
+    {/* Create Shop Form */}
+    <form onSubmit={handleCreate} className="bg-white/10 p-4 sm:p-6 rounded-lg mb-8 w-full max-w-xl mx-auto">
+      <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">Create Shop</h2>
+      {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
+      {success && <p className="text-green-400 text-sm mb-2">{success}</p>}
 
-        {/* Shop Table */}
-        <div className="bg-white/10 rounded-lg overflow-hidden shadow-md mb-8">
-          <table className="min-w-full table-auto text-white">
-            <thead>
-              <tr className="bg-white/20 text-left text-sm uppercase tracking-wider">
-                <th className="p-4">Shop ID</th>
-                <th className="p-4">Username</th>
-                <th className="p-4">Balance</th>
-              </tr>
-            </thead>
-            <tbody>
-              {shops.map((shop) => (
-                <tr
-                  key={shop.shop_id}
-                  className={`border-t border-white/20 hover:bg-white/10 transition cursor-pointer ${
-                    selectedShopId === shop.shop_id ? "bg-indigo-700" : ""
-                  }`}
-                  onClick={() => onShopClick(shop.shop_id)}
-                >
-                  <td className="p-4">{shop.shop_id}</td>
-                  <td className="p-4">{shop.username}</td>
-                  <td className="p-4">{shop.balance.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-         {selectedShopId && <WeeklyCommissions shopId={selectedShopId!} />}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input
+          name="shop_id"
+          value={form.shop_id}
+          onChange={handleChange}
+          placeholder="Shop ID"
+          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+          required
+        />
+        <input
+          name="username"
+          value={form.username}
+          onChange={handleChange}
+          placeholder="Username"
+          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+          placeholder="Password"
+          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+          required
+        />
+        <input
+          name="balance"
+          type="number"
+          step="0.01"
+          value={form.balance}
+          onChange={handleChange}
+          placeholder="Balance"
+          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+          required
+        />
       </div>
+
+      <button
+        type="submit"
+        className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 transition-colors py-2 rounded font-semibold"
+      >
+        Create Shop
+      </button>
+    </form>
+
+    {/* Shop Table */}
+    <div className="bg-white/10 rounded-lg overflow-x-auto shadow-md mb-8">
+      <table className="min-w-full table-auto text-white">
+        <thead>
+          <tr className="bg-white/20 text-left text-sm uppercase tracking-wider">
+            <th className="p-4 whitespace-nowrap">Shop ID</th>
+            <th className="p-4 whitespace-nowrap">Username</th>
+            <th className="p-4 whitespace-nowrap">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {shops.map((shop) => (
+            <tr
+              key={shop.shop_id}
+              className={`border-t border-white/20 hover:bg-white/10 transition cursor-pointer ${
+                selectedShopId === shop.shop_id ? "bg-indigo-700" : ""
+              }`}
+              onClick={() => onShopClick(shop.shop_id)}
+            >
+              <td className="p-4 whitespace-nowrap">{shop.shop_id}</td>
+              <td className="p-4 whitespace-nowrap">{shop.username}</td>
+              <td className="p-4 whitespace-nowrap">{shop.balance.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
+
+    {selectedShopId && <WeeklyCommissions shopId={selectedShopId!} />}
+  </div>
+</div>
+
   );
 }

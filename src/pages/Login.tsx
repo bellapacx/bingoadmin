@@ -15,7 +15,7 @@ export default function Login({ onLogin }: LoginProps) {
   const handleLogin = async () => {
     try {
       console.log("Attempting login...");
-      const res = await axios.post("http://127.0.0.1:8000/login", { username, password });
+      const res = await axios.post("https://bingoapi-qtai.onrender.com/login", { username, password });
       console.log("Login success:", res.data);
       localStorage.setItem("token", res.data.token);
       onLogin();            // Notify parent about login state change

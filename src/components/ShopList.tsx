@@ -14,7 +14,7 @@ export default function ShopList() {
 
   const fetchShops = async () => {
     try {
-      const res = await axios.get("/shops");
+      const res = await axios.get("https://bingoapi-qtai.onrender.com/shops");
       setShops(res.data);
     } catch (err) {
       console.error("Error fetching shops:", err);

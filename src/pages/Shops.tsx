@@ -61,7 +61,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("/shops", {
+      await axios.post("https://bingoapi-qtai.onrender.com/shops", {
         shop_id: form.shop_id,
         username: form.username,
         password: form.password,

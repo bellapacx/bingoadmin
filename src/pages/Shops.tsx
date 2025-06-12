@@ -27,11 +27,16 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [commissions, setCommissions] = useState<Record<string, CommissionEntry>>({});
 
-  console.log(commissions)
+  // New states for date filtering
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
+  console.log(commissions);
+  console.log(startDate);
+  console.log(endDate);
   const fetchShops = async () => {
     try {
-      const res = await axios.get("/shops");
+      const res = await axios.get("https://bingoapi-qtai.onrender.com/shops");
       setShops(res.data);
     } catch (err) {
       console.error("Failed to fetch shops", err);
@@ -40,7 +45,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
 
   const fetchCommissions = async (shopId: string) => {
     try {
-      const res = await axios.get(`/shop_commissions/${shopId}`);
+      const res = await axios.get(`https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}`);
       setCommissions(res.data.commissions || {});
     } catch (err) {
       console.error("Failed to fetch commissions", err);

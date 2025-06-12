@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../services/api";
+import axios from "../services/api"; // ✅ Use your local axios config, not default axios
 
 interface WeeklyCommission {
   week_id: string;
@@ -9,33 +9,15 @@ interface WeeklyCommission {
   payment_status: "paid" | "unpaid";
 }
 
-interface WeeklyCommissionsProps {
-  shopId: string | null;
-  startDate: string;
-  endDate: string;
-}
-
-export default function WeeklyCommissions({
-  shopId,
-  startDate,
-  endDate,
-}: WeeklyCommissionsProps) {
+export default function WeeklyCommissions({ shopId }: { shopId: string | null }) {
   const [commissions, setCommissions] = useState<WeeklyCommission[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchCommissions = async () => {
     if (!shopId) return;
     setLoading(true);
-
     try {
-      let url = `https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}`;
-      const params = [];
-
-      if (startDate) params.push(`start=${startDate}`);
-      if (endDate) params.push(`end=${endDate}`);
-      if (params.length > 0) url += `?${params.join("&")}`;
-
-      const res = await axios.get(url);
+      const res = await axios.get(`https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}`);
       setCommissions(res.data?.weekly_commissions || []);
     } catch (err) {
       console.error("Failed to fetch commissions", err);
@@ -56,7 +38,7 @@ export default function WeeklyCommissions({
 
   useEffect(() => {
     fetchCommissions();
-  }, [shopId, startDate, endDate]);
+  }, [shopId]);
 
   if (!shopId) {
     return <div className="p-4 text-white">No shop selected.</div>;
@@ -85,8 +67,8 @@ export default function WeeklyCommissions({
             {commissions.map((item) => (
               <tr key={item.week_id} className="border-t border-white/10">
                 <td className="p-2">{item.week}</td>
-                <td className="p-2">ETB {item.total_commission.toFixed(2)}</td>
-                <td className="p-2">ETB {item.total_payment.toFixed(2)}</td>
+                <td className="p-2">ETB{item.total_commission.toFixed(2)}</td>
+                <td className="p-2">ETB{item.total_payment.toFixed(2)}</td>
                 <td className="p-2">
                   {item.payment_status === "paid" ? (
                     <span className="text-green-400 font-semibold">Paid</span>

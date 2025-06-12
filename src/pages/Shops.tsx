@@ -27,8 +27,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [commissions, setCommissions] = useState<Record<string, CommissionEntry>>({});
 
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  console.log(commissions)
 
   const fetchShops = async () => {
     try {
@@ -38,15 +37,10 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
       console.error("Failed to fetch shops", err);
     }
   };
-  
-  console.log("Commissions:", commissions);
-  const fetchCommissions = async (shopId: string, start?: string, end?: string) => {
+
+  const fetchCommissions = async (shopId: string) => {
     try {
-      let url = `https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}`;
-      if (start && end) {
-        url += `?start=${start}&end=${end}`;
-      }
-      const res = await axios.get(url);
+      const res = await axios.get(`/shop_commissions/${shopId}`);
       setCommissions(res.data.commissions || {});
     } catch (err) {
       console.error("Failed to fetch commissions", err);
@@ -57,12 +51,6 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   useEffect(() => {
     fetchShops();
   }, []);
-
-  useEffect(() => {
-    if (selectedShopId) {
-      fetchCommissions(selectedShopId, startDate, endDate);
-    }
-  }, [startDate, endDate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -90,6 +78,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
 
   const onShopClick = (shopId: string) => {
     setSelectedShopId(shopId);
+    // Reset date filters on new selection
     setStartDate("");
     setEndDate("");
     fetchCommissions(shopId);
@@ -97,7 +86,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div>
-      <Navbar onLogout={onLogout} />
+      <Navbar onLogout={onLogout}/>
       <div className="p-6">
         <h1 className="text-3xl font-bold text-white mb-4">Shops</h1>
 
@@ -179,32 +168,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
           </table>
         </div>
 
-        {/* Date Filter & Commissions */}
-        {selectedShopId && (
-          <div className="bg-white/5 p-4 rounded-lg mb-8">
-            <h2 className="text-white text-lg font-semibold mb-2">Filter Commissions by Date</h2>
-            <div className="flex gap-4 mb-4">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-              />
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-              />
-            </div>
-            <WeeklyCommissions
-              shopId={selectedShopId}
-              
-              startDate={startDate}
-              endDate={endDate}
-            />
-          </div>
-        )}
+         {selectedShopId && <WeeklyCommissions shopId={selectedShopId!} />}
       </div>
     </div>
   );

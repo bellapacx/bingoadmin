@@ -26,14 +26,9 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   const [success, setSuccess] = useState("");
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [commissions, setCommissions] = useState<Record<string, CommissionEntry>>({});
-
-  // New states for date filtering
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-
-  console.log(commissions);
-  console.log(startDate);
-  console.log(endDate);
+  console.log(commissions,startDate,endDate)
   const fetchShops = async () => {
     try {
       const res = await axios.get("https://bingoapi-qtai.onrender.com/shops");
@@ -74,110 +69,180 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
       setError("");
       setForm({ shop_id: "", username: "", password: "", balance: "" });
       fetchShops();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setError("Failed to create shop. Please check your inputs.");
       setSuccess("");
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.put(`https://bingoapi-qtai.onrender.com/shops/${form.shop_id}`, {
+        username: form.username,
+        password: form.password || undefined,
+        balance: parseFloat(form.balance),
+      });
+      setSuccess("Shop updated successfully.");
+      setError("");
+      setForm({ shop_id: "", username: "", password: "", balance: "" });
+      fetchShops();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update shop.");
+      setSuccess("");
+    }
+  };
+
+  const handleDelete = async (shopId: string) => {
+    if (!confirm("Are you sure you want to delete this shop?")) return;
+    try {
+      await axios.delete(`https://bingoapi-qtai.onrender.com/shops/${shopId}`);
+      setSuccess("Shop deleted successfully.");
+      setError("");
+      if (selectedShopId === shopId) {
+        setSelectedShopId(null);
+        setCommissions({});
+      }
+      fetchShops();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to delete shop.");
+      setSuccess("");
+    }
+  };
+
   const onShopClick = (shopId: string) => {
     setSelectedShopId(shopId);
-    // Reset date filters on new selection
     setStartDate("");
     setEndDate("");
     fetchCommissions(shopId);
   };
 
+  const isEditing = form.shop_id && shops.some(s => s.shop_id === form.shop_id);
+
   return (
     <div>
-  <Navbar onLogout={onLogout} />
-  <div className="p-4 sm:p-6">
-    <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">Shops</h1>
+      <Navbar onLogout={onLogout} />
+      <div className="p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">Shops</h1>
 
-    {/* Create Shop Form */}
-    <form onSubmit={handleCreate} className="bg-white/10 p-4 sm:p-6 rounded-lg mb-8 w-full max-w-xl mx-auto">
-      <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">Create Shop</h2>
-      {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
-      {success && <p className="text-green-400 text-sm mb-2">{success}</p>}
+        {/* Form */}
+        <form
+          onSubmit={isEditing ? handleUpdate : handleCreate}
+          className="bg-white/10 p-4 sm:p-6 rounded-lg mb-8 w-full max-w-xl mx-auto"
+        >
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
+            {isEditing ? "Edit Shop" : "Create Shop"}
+          </h2>
+          {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
+          {success && <p className="text-green-400 text-sm mb-2">{success}</p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input
-          name="shop_id"
-          value={form.shop_id}
-          onChange={handleChange}
-          placeholder="Shop ID"
-          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-          required
-        />
-        <input
-          name="username"
-          value={form.username}
-          onChange={handleChange}
-          placeholder="Username"
-          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-          required
-        />
-        <input
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-          required
-        />
-        <input
-          name="balance"
-          type="number"
-          step="0.01"
-          value={form.balance}
-          onChange={handleChange}
-          placeholder="Balance"
-          className="p-2 rounded bg-gray-800 text-white border border-gray-700"
-          required
-        />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input
+              name="shop_id"
+              value={form.shop_id}
+              onChange={handleChange}
+              placeholder="Shop ID"
+              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+              required
+             disabled={!!isEditing}
+
+            />
+            <input
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+              placeholder="Username"
+              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+              required
+            />
+            <input
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+              required={!isEditing}
+            />
+            <input
+              name="balance"
+              type="number"
+              step="0.01"
+              value={form.balance}
+              onChange={handleChange}
+              placeholder="Balance"
+              className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 transition-colors py-2 rounded font-semibold"
+          >
+            {isEditing ? "Update Shop" : "Create Shop"}
+          </button>
+        </form>
+
+        {/* Shop Table */}
+        <div className="bg-white/10 rounded-lg overflow-x-auto shadow-md mb-8">
+          <table className="min-w-full table-auto text-white">
+            <thead>
+              <tr className="bg-white/20 text-left text-sm uppercase tracking-wider">
+                <th className="p-4 whitespace-nowrap">Shop ID</th>
+                <th className="p-4 whitespace-nowrap">Username</th>
+                <th className="p-4 whitespace-nowrap">Balance</th>
+                <th className="p-4 whitespace-nowrap">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shops.map((shop) => (
+                <tr
+                  key={shop.shop_id}
+                  className={`border-t border-white/20 hover:bg-white/10 transition ${
+                    selectedShopId === shop.shop_id ? "bg-indigo-700" : ""
+                  }`}
+                  onClick={() => onShopClick(shop.shop_id)}
+                >
+                  <td className="p-4">{shop.shop_id}</td>
+                  <td className="p-4">{shop.username}</td>
+                  <td className="p-4">{shop.balance.toFixed(2)}</td>
+                  <td className="p-4 space-x-2">
+                    <button
+                      className="bg-yellow-500 hover:bg-yellow-400 text-white px-3 py-1 rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setForm({
+                          shop_id: shop.shop_id,
+                          username: shop.username,
+                          password: "",
+                          balance: shop.balance.toString(),
+                        });
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(shop.shop_id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {selectedShopId && <WeeklyCommissions shopId={selectedShopId} />}
       </div>
-
-      <button
-        type="submit"
-        className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 transition-colors py-2 rounded font-semibold"
-      >
-        Create Shop
-      </button>
-    </form>
-
-    {/* Shop Table */}
-    <div className="bg-white/10 rounded-lg overflow-x-auto shadow-md mb-8">
-      <table className="min-w-full table-auto text-white">
-        <thead>
-          <tr className="bg-white/20 text-left text-sm uppercase tracking-wider">
-            <th className="p-4 whitespace-nowrap">Shop ID</th>
-            <th className="p-4 whitespace-nowrap">Username</th>
-            <th className="p-4 whitespace-nowrap">Balance</th>
-          </tr>
-        </thead>
-        <tbody>
-          {shops.map((shop) => (
-            <tr
-              key={shop.shop_id}
-              className={`border-t border-white/20 hover:bg-white/10 transition cursor-pointer ${
-                selectedShopId === shop.shop_id ? "bg-indigo-700" : ""
-              }`}
-              onClick={() => onShopClick(shop.shop_id)}
-            >
-              <td className="p-4 whitespace-nowrap">{shop.shop_id}</td>
-              <td className="p-4 whitespace-nowrap">{shop.username}</td>
-              <td className="p-4 whitespace-nowrap">{shop.balance.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
-
-    {selectedShopId && <WeeklyCommissions shopId={selectedShopId!} />}
-  </div>
-</div>
-
   );
 }

@@ -80,20 +80,30 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
 
  const handleUpdate = async (e: React.FormEvent) => {
   e.preventDefault();
+
+  const parsedBalance = parseFloat(form.balance);
+  if (form.balance !== "" && isNaN(parsedBalance)) {
+    setError("Invalid balance value.");
+    return;
+  }
+
+  const updatePayload: any = {
+    username: form.username,
+  };
+
+  if (form.password) {
+    updatePayload.password = form.password;
+  }
+
+  if (form.balance !== "") {
+    updatePayload.balance = parsedBalance;
+  }
+
+  if (form.billing_type !== "") {
+    updatePayload.billing_type = form.billing_type;
+  }
+
   try {
-    const updatePayload: any = {
-      username: form.username,
-      balance: parseFloat(form.balance),
-    };
-
-    if (form.password) {
-      updatePayload.password = form.password;
-    }
-
-    if (form.billing_type !== "") {
-      updatePayload.billing_type = form.billing_type;
-    }
-
     await axios.put(`https://bingoapi-qtai.onrender.com/shops/${form.shop_id}`, updatePayload);
 
     setSuccess("Shop updated successfully.");

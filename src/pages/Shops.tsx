@@ -78,24 +78,35 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await axios.put(`https://bingoapi-qtai.onrender.com/shops/${form.shop_id}`, {
-        username: form.username,
-        password: form.password || undefined,
-        balance: parseFloat(form.balance),
-      });
-      setSuccess("Shop updated successfully.");
-      setError("");
-      setForm({ shop_id: "", username: "", password: "", balance: "",billing_type: "prepaid" });
-      fetchShops();
-    } catch (err) {
-      console.error(err);
-      setError("Failed to update shop.");
-      setSuccess("");
+ const handleUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const updatePayload: any = {
+      username: form.username,
+      balance: parseFloat(form.balance),
+    };
+
+    if (form.password) {
+      updatePayload.password = form.password;
     }
-  };
+
+    if (form.billing_type !== "") {
+      updatePayload.billing_type = form.billing_type;
+    }
+
+    await axios.put(`https://bingoapi-qtai.onrender.com/shops/${form.shop_id}`, updatePayload);
+
+    setSuccess("Shop updated successfully.");
+    setError("");
+    setForm({ shop_id: "", username: "", password: "", balance: "", billing_type: "prepaid" });
+    fetchShops();
+  } catch (err) {
+    console.error(err);
+    setError("Failed to update shop.");
+    setSuccess("");
+  }
+};
+
 
   const handleDelete = async (shopId: string) => {
     if (!confirm("Are you sure you want to delete this shop?")) return;

@@ -65,6 +65,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
         username: form.username,
         password: form.password,
         balance: parseFloat(form.balance),
+        billing_type: form.billing_type,
       });
       setSuccess("Shop created successfully.");
       setError("");

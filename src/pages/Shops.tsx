@@ -21,6 +21,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
     username: "",
     password: "",
     balance: "",
+    billing_type: "prepaid",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -52,7 +53,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
     fetchShops();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -67,7 +68,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
       });
       setSuccess("Shop created successfully.");
       setError("");
-      setForm({ shop_id: "", username: "", password: "", balance: "" });
+      setForm({ shop_id: "", username: "", password: "", balance: "" ,billing_type: "prepaid",});
       fetchShops();
     } catch (err) {
       console.error(err);
@@ -86,7 +87,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
       });
       setSuccess("Shop updated successfully.");
       setError("");
-      setForm({ shop_id: "", username: "", password: "", balance: "" });
+      setForm({ shop_id: "", username: "", password: "", balance: "",billing_type: "prepaid" });
       fetchShops();
     } catch (err) {
       console.error(err);
@@ -177,6 +178,17 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
               className="p-2 rounded bg-gray-800 text-white border border-gray-700"
               required
             />
+            <select
+  name="billing_type"
+  value={form.billing_type}
+  onChange={handleChange}
+  className="p-2 rounded bg-gray-800 text-white border border-gray-700"
+  required
+>
+  <option value="prepaid">Prepaid</option>
+  <option value="postpaid">Postpaid</option>
+</select>
+
           </div>
 
           <button
@@ -220,6 +232,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
                           username: shop.username,
                           password: "",
                           balance: shop.balance.toString(),
+                          billing_type: "prepaid",
                         });
                       }}
                     >

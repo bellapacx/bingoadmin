@@ -32,7 +32,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   console.log(commissions,startDate,endDate)
   const fetchShops = async () => {
     try {
-      const res = await axios.get("https://corebingoapi.onrender.com/shops");
+      const res = await axios.get("https://bingoapi-qtai.onrender.com/shops");
       setShops(res.data);
     } catch (err) {
       console.error("Failed to fetch shops", err);
@@ -41,7 +41,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
 
   const fetchCommissions = async (shopId: string) => {
     try {
-      const res = await axios.get(`https://corebingoapi.onrender.com/shop_commissions/${shopId}`);
+      const res = await axios.get(`https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}`);
       setCommissions(res.data.commissions || {});
     } catch (err) {
       console.error("Failed to fetch commissions", err);
@@ -60,7 +60,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("https://corebingoapi.onrender.com/shops", {
+      await axios.post("https://bingoapi-qtai.onrender.com/shops", {
         shop_id: form.shop_id,
         username: form.username,
         password: form.password,
@@ -104,7 +104,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   }
 
   try {
-    await axios.put(`https://corebingoapi.onrender.com/shops/${form.shop_id}`, updatePayload);
+    await axios.put(`https://bingoapi-qtai.onrender.com/shops/${form.shop_id}`, updatePayload);
 
     setSuccess("Shop updated successfully.");
     setError("");
@@ -121,7 +121,7 @@ export default function Shops({ onLogout }: { onLogout: () => void }) {
   const handleDelete = async (shopId: string) => {
     if (!confirm("Are you sure you want to delete this shop?")) return;
     try {
-      await axios.delete(`https://corebingoapi.onrender.com/shops/${shopId}`);
+      await axios.delete(`https://bingoapi-qtai.onrender.com/shops/${shopId}`);
       setSuccess("Shop deleted successfully.");
       setError("");
       if (selectedShopId === shopId) {

@@ -13,7 +13,7 @@ export default function Navbar({ onLogout }: NavbarProps) {
         <Link to="/shops" className="hover:underline">Shops</Link>
         <button
           onClick={onLogout}
-          className="ml-4 bg-red-600 hover:bg-red-500 px-3 py-1 rounded"
+          className="ml-4 bg-red-500 hover:bg-red-500 px-3 py-1 rounded"
         >
           Logout
         </button>

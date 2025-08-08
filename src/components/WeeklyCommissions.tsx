@@ -17,7 +17,7 @@ export default function WeeklyCommissions({ shopId }: { shopId: string | null })
     if (!shopId) return;
     setLoading(true);
     try {
-      const res = await axios.get(`https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}`);
+      const res = await axios.get(`https://corebingoapi.onrender.com/shop_commissions/${shopId}`);
       setCommissions(res.data?.weekly_commissions || []);
     } catch (err) {
       console.error("Failed to fetch commissions", err);
@@ -29,7 +29,7 @@ export default function WeeklyCommissions({ shopId }: { shopId: string | null })
 
   const markAsPaid = async (weekId: string) => {
     try {
-      await axios.post(`https://bingoapi-qtai.onrender.com/shop_commissions/${shopId}/pay/${weekId}`);
+      await axios.post(`https://corebingoapi.onrender.com/shop_commissions/${shopId}/pay/${weekId}`);
       fetchCommissions(); // Refresh
     } catch (err) {
       console.error("Failed to mark as paid", err);

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://bingoapi-qtai.onrender.com"; // Change if your backend runs elsewhere
+const API_URL = "https://corebingoapi.onrender.com"; // Change if your backend runs elsewhere
 
 const api = axios.create({
   baseURL: API_URL,
